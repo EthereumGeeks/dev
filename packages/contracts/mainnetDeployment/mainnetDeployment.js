@@ -48,18 +48,18 @@ async function mainnetDeploy(configParams) {
 
 
   if (LUSDWETHPairAddr == th.ZERO_ADDRESS) {
-    // Deploy Unipool for LUSD-WETH
+    // Deploy Unipool for LUSD-OCEAN
     await mdh.sendAndWaitForTransaction(uniswapV2Factory.createPair(
       configParams.externalAddrs.WETH_ERC20,
       liquityCore.lusdToken.address,
       { gasPrice }
     ))
 
-    // Check Uniswap Pair LUSD-WETH pair after pair creation (forwards and backwards should have same address)
+    // Check Uniswap Pair LUSD-OCEAN pair after pair creation (forwards and backwards should have same address)
     LUSDWETHPairAddr = await uniswapV2Factory.getPair(liquityCore.lusdToken.address, configParams.externalAddrs.WETH_ERC20)
     assert.notEqual(LUSDWETHPairAddr, th.ZERO_ADDRESS)
     WETHLUSDPairAddr = await uniswapV2Factory.getPair(configParams.externalAddrs.WETH_ERC20, liquityCore.lusdToken.address)
-    console.log(`LUSD-WETH pair contract address after Uniswap pair creation: ${LUSDWETHPairAddr}`)
+    console.log(`LUSD-OCEAN pair contract address after Uniswap pair creation: ${LUSDWETHPairAddr}`)
     assert.equal(WETHLUSDPairAddr, LUSDWETHPairAddr)
   }
 
@@ -82,7 +82,7 @@ async function mainnetDeploy(configParams) {
   // Deploy a read-only multi-trove getter
   const multiTroveGetter = await mdh.deployMultiTroveGetterMainnet(liquityCore, deploymentState)
 
-  // Connect Unipool to LQTYToken and the LUSD-WETH pair address, with a 6 week duration
+  // Connect Unipool to LQTYToken and the LUSD-OCEAN pair address, with a 6 week duration
   const LPRewardsDuration = timeVals.SECONDS_IN_SIX_WEEKS
   await mdh.connectUnipoolMainnet(unipool, LQTYContracts, LUSDWETHPairAddr, LPRewardsDuration)
 
@@ -291,7 +291,7 @@ async function mainnetDeploy(configParams) {
   // let deployerLUSDBal = await liquityCore.lusdToken.balanceOf(deployerWallet.address)
   // th.logBN("deployer's LUSD balance", deployerLUSDBal)
 
-  // // Check Uniswap pool has LUSD and WETH tokens
+  // // Check Uniswap pool has LUSD and OCEAN tokens
   const LUSDETHPair = await new ethers.Contract(
     LUSDWETHPairAddr,
     UniswapV2Pair.abi,
@@ -303,7 +303,7 @@ async function mainnetDeploy(configParams) {
   // console.log(`LUSD-ETH Pair token 0: ${th.squeezeAddr(token0Addr)},
   //       LUSDToken contract addr: ${th.squeezeAddr(liquityCore.lusdToken.address)}`)
   // console.log(`LUSD-ETH Pair token 1: ${th.squeezeAddr(token1Addr)},
-  //       WETH ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.WETH_ERC20)}`)
+  //       OCEAN ERC20 contract addr: ${th.squeezeAddr(configParams.externalAddrs.WETH_ERC20)}`)
 
   // // Check initial LUSD-ETH pair reserves before provision
   // let reserves = await LUSDETHPair.getReserves()

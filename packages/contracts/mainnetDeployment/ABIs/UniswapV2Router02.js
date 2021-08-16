@@ -2,7 +2,7 @@ const UniswapV2Router02 = {
     "abi": [
       {
         "inputs": [],
-        "name": "WETH",
+        "name": "OCEAN",
         "outputs": [
           {
             "internalType": "address",
@@ -970,7 +970,7 @@ const UniswapV2Router02 = {
     "interface": [
       {
         "inputs": [],
-        "name": "WETH",
+        "name": "OCEAN",
         "outputs": [
           {
             "internalType": "address",

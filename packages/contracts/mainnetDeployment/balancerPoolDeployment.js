@@ -5,7 +5,8 @@ const { WeightedPool2TokensFactory } = require("./ABIs/WeightedPool2TokensFactor
 const { WeightedPool2Tokens } = require("./ABIs/WeightedPool2Tokens.js")
 const { IVault } = require("./ABIs/IVault.js")
 const { ERC20 } = require("./ABIs/ERC20.js")
-const { WETH: WETH_ABI } = require("./ABIs/WETH.js")
+// here integrate the ocean protocol   script .
+const { OCEAN: OCEAN_ABI } = require("./ABIs/OCEAN.js")
 const { ChainlinkAggregatorV3Interface } = require("./ABIs/ChainlinkAggregatorV3Interface.js")
 const toBigNum = ethers.BigNumber.from
 const { TestHelper: th, TimeValues: timeVals } = require("../utils/testHelpers.js")
@@ -21,14 +22,14 @@ const DELEGATE_OWNER = '0xBA1BA1ba1BA1bA1bA1Ba1BA1ba1BA1bA1ba1ba1B';
 
 // Mainnet addresses; adjust for testnets
 
-const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+const OCEAN = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 const LUSD = '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0';
 const CHAINLINK_ETHUSD_PROXY = '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419';
 
-const tokens = [LUSD, WETH];
+const tokens = [LUSD, OCEAN];
 const weights = [toBigNum(dec(4, 17)), toBigNum(dec(6, 17))];
 
-const NAME = 'WETH/LUSD Pool';
+const NAME = 'OCEAN/LUSD Pool';
 const SYMBOL = '60WETH-40LUSD';
 const swapFeePercentage = toBigNum(dec(5, 15)); // 0.5%
 
@@ -103,7 +104,7 @@ async function main() {
   const lusd_balance = INITIAL_FUNDING.mul(weights[0]).div(toBigNum(dec(1, 18)));
   const initialBalances = [lusd_balance, weth_balance];
   th.logBN('Initial LUSD', lusd_balance)
-  th.logBN('Initial WETH', weth_balance)
+  th.logBN('Initial OCEAN', weth_balance)
 
   const JOIN_KIND_INIT = 0;
 
@@ -125,19 +126,19 @@ async function main() {
   // (well, except for the BPT out)
 
   // Need to approve the Vault to transfer the tokens!
-  const weth = new ethers.Contract(
-    WETH,
+  const ocean = new ethers.Contract(
+    OCEAN,
     WETH_ABI.abi,
     deployerWallet
   )
-  th.logBN('weth balance: ', await weth.balanceOf(deployerWalletAddress))
-  const currentWethBalance = await weth.balanceOf(deployerWalletAddress)
+  th.logBN('ocean balance: ', await ocean.balanceOf(deployerWalletAddress))
+  const currentWethBalance = await ocean.balanceOf(deployerWalletAddress)
   if (currentWethBalance.lt(weth_balance)) {
-    const txDepositWeth = await weth.deposit({ value: weth_balance.sub(currentWethBalance) });
+    const txDepositWeth = await ocean.deposit({ value: weth_balance.sub(currentWethBalance) });
     await txDepositWeth.wait()
   }
-  th.logBN('weth balance: ', await weth.balanceOf(deployerWalletAddress))
-  const txApproveWeth = await weth.approve(VAULT, weth_balance);
+  th.logBN('ocean balance: ', await ocean.balanceOf(deployerWalletAddress))
+  const txApproveWeth = await ocean.approve(VAULT, weth_balance);
   await txApproveWeth.wait()
   const lusd = new ethers.Contract(
     LUSD,

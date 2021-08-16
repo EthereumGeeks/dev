@@ -320,7 +320,7 @@ const IVault = {
     },
     {
       "inputs": [],
-      "name": "WETH",
+      "name": "OCEAN",
       "outputs": [
         {
           "internalType": "contract IWETH",

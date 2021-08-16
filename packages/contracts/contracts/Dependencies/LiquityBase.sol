@@ -19,6 +19,10 @@ contract LiquityBase is BaseMath, ILiquityBase {
     uint constant public _100pct = 1000000000000000000; // 1e18 == 100%
 
     // Minimum collateral ratio for individual troves
+
+
+// TODO: check  wether these constants needed to be kept in the seperate module , in order to 
+
     uint constant public MCR = 1100000000000000000; // 110%
 
     // Critical system collateral ratio. If the system's total collateral ratio (TCR) falls below the CCR, Recovery Mode is triggered.
@@ -56,14 +60,14 @@ contract LiquityBase is BaseMath, ILiquityBase {
     function _getCollGasCompensation(uint _entireColl) internal pure returns (uint) {
         return _entireColl / PERCENT_DIVISOR;
     }
-
+/// @dev :  returns the collateral of the entire trove  which is to be lieuidated .
     function getEntireSystemColl() public view returns (uint entireSystemColl) {
         uint activeColl = activePool.getETH();
         uint liquidatedColl = defaultPool.getETH();
 
         return activeColl.add(liquidatedColl);
     }
-
+    
     function getEntireSystemDebt() public view returns (uint entireSystemDebt) {
         uint activeDebt = activePool.getLUSDDebt();
         uint closedDebt = defaultPool.getLUSDDebt();

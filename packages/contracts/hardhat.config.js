@@ -5,7 +5,26 @@ require("solidity-coverage");
 require("hardhat-gas-reporter");
 require("hardhat-contract-sizer");
 const accounts = require("./hardhatAccountsList2k.js");
+const {Wallet} = require("@ethersproject/wallet");
 const accountsList = accounts.accountsList
+// params for the dev deployment 
+const deployerAccount = process.env.DEPLOYER_PRIVATE_KEY || Wallet.createRandom().privateKey;
+const devChainRichAccount = "0x4d5db4107d237df6a3d58ee5f70ae63d73d7658d4026f2eefd2f204c81682cb7";
+
+// reference from the lib-ethers , for creating the  dev enviornment EOA wallets .
+let  numberOfAccounts = 0;
+const generateRandomAccounts = (numberOfAccounts) => {
+    const accounts = new Array<String>(numberOfAccounts);
+  
+    for (let i = 0; i < numberOfAccounts; ++i) {
+      accounts[i] = Wallet.createRandom().privateKey;
+    }
+  
+}
+const numAccounts = 100;
+
+
+
 
 const fs = require('fs')
 const getSecret = (secretKey, defaultValue='') => {
@@ -24,6 +43,11 @@ const alchemyUrl = () => {
 
 const alchemyUrlRinkeby = () => {
     return `https://eth-rinkeby.alchemyapi.io/v2/${getSecret('alchemyAPIKeyRinkeby')}`
+}
+
+
+const devUrl = () => {
+    return `http://localhost:8545`
 }
 
 module.exports = {
@@ -82,6 +106,16 @@ module.exports = {
             gas: 10000000,  // tx gas limit
             accounts: [getSecret('RINKEBY_DEPLOYER_PRIVATEKEY', '0x60ddfe7f579ab6867cbe7a2dc03853dc141d7a4ab6dbefc0dae2d2b1bd4e487f')]
         },
+        dev: {
+            
+            url: devUrl(),
+            gas: 100000000 ,
+            accounts: [deployerAccount, devChainRichAccount, ...generateRandomAccounts(numAccounts - 2)]
+
+
+        }
+    
+    
     },
     etherscan: {
         apiKey: getSecret("ETHERSCAN_API_KEY")
